@@ -1,4 +1,5 @@
 const User = require("../modal/userModal");
+const jwt = require("jsonwebtoken");
 
 // 1) SIGNIN
 exports.signup = async function (req, res) {
@@ -24,8 +25,8 @@ exports.signup = async function (req, res) {
   }
 };
 
-// LOGIN )
 
+// LOGIN )
 exports.login = async function (req, res) {
   try {
     const { email, password } = req.body;
@@ -36,12 +37,20 @@ exports.login = async function (req, res) {
     //comparing the passwor
     const isPasswordValid = await user.comparePassword(password);
 
+    //GENERATING A TOKEN
+    const TOKEN = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    });
+
     if (isPasswordValid) {
+      //-- SENDING THE TOKEN AND WRAPING IN COOKIE
+      res.cookie("token", TOKEN, { httpOnly: true, secure: false });
+
       res.status(200).json({
         status: "success",
-        data: isPasswordValid,
+        data: "Succesfully logged in",
       });
-    }else throw new Error('Invalid Login credentials')
+    } else throw new Error("Invalid Login credentials");
   } catch (err) {
     res.status(404).json({
       status: "failed",
