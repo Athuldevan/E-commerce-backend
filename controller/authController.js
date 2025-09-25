@@ -25,7 +25,6 @@ exports.signup = async function (req, res) {
   }
 };
 
-
 // LOGIN )
 exports.login = async function (req, res) {
   try {
@@ -44,11 +43,20 @@ exports.login = async function (req, res) {
 
     if (isPasswordValid) {
       //-- SENDING THE TOKEN AND WRAPING IN COOKIE
-      res.cookie("token", TOKEN, { httpOnly: true, secure: false });
+      res.cookie("token", TOKEN, {
+        httpOnly: true,
+        secure: false,
+        sameSite:"lax",
+         maxAge: 24 * 60 * 60 * 1000 // 1 dayy
+      });
 
       res.status(200).json({
         status: "success",
         data: "Succesfully logged in",
+        user: {
+          name: user?.name,
+          email: user?.email,
+        },
       });
     } else throw new Error("Invalid Login credentials");
   } catch (err) {
