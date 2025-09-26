@@ -16,11 +16,13 @@ exports.getAllProducts = async function (req, res) {
   }
 };
 
-//GET A SINGLE PRODUCT
+//GET A SINGLE PRODUCT  BY ID
 exports.getProduct = async function (req, res) {
   try {
     const id = req.params?.id;
+    console.log(id);
     const product = await Product.findById(id);
+    console.log(product);
     res.status(200).json({
       status: "success",
       data: {

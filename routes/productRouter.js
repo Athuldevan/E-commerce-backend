@@ -5,7 +5,7 @@ const { authenticateUser } = require("../middlewares/auth.middleware");
 
 router
   .route("/")
-  .get( productController.getAllProducts)
+  .get(authenticateUser, productController.getAllProducts)
   .post(productController.createProduct);
 
 router.route("/:id").get(productController.getProduct);
