@@ -24,16 +24,19 @@ exports.getCartItems = async function (req, res) {
   }
 };
 
+//ADD TO CART
 exports.addToCart = async function (req, res) {
   try {
     const loggedInUser = req.user;
+    const {productId} = req.params;
+
     if (!loggedInUser) {
       return res.status(400).json({
         status: "failed",
         message: "Please Login first.",
       });
     }
-    const { quantity, productId } = req.body;
+    const { quantity } = req.body;
 
     //Checking if the product is already exisit in the cart
     const isAlreadyInCart = await Cart.findOne({
@@ -58,6 +61,46 @@ exports.addToCart = async function (req, res) {
     res.status(201).json({
       status: "success",
       data: newCartItem,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: err.message,
+    });
+  }
+};
+
+//UPDATE CART QUANTITY
+exports.updateCartQuantity = async function (req, res) {
+  try {
+    const loggedInUser = req.user;
+    const { quantity, productId } = req.body;
+    if (!loggedInUser) {
+      return res.status(401).json({
+        status: "failed",
+        message: "please login first",
+      });
+    }
+
+    const cartItem = await Cart.findOne({
+      productId,
+      userId: loggedInUser._id,
+    });
+
+    if (!cartItem) {
+      return res.status(400).json({
+        status: "failed",
+        message: "Invaid product id",
+      });
+    }
+
+    cartItem.quantity = quantity;
+    await cartItem.populate("productId");
+
+    res.status(201).json({
+      status: "success",
+      message: "Cart quantity upated succesfully",
+      data: cartItem,
     });
   } catch (err) {
     res.status(400).json({
