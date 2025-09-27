@@ -28,7 +28,7 @@ exports.getCartItems = async function (req, res) {
 exports.addToCart = async function (req, res) {
   try {
     const loggedInUser = req.user;
-    const {productId} = req.params;
+    const { productId } = req.params;
 
     if (!loggedInUser) {
       return res.status(400).json({
@@ -74,7 +74,9 @@ exports.addToCart = async function (req, res) {
 exports.updateCartQuantity = async function (req, res) {
   try {
     const loggedInUser = req.user;
-    const { quantity, productId } = req.body;
+    const { productId } = req.params;
+    const { quantity } = req.body;
+
     if (!loggedInUser) {
       return res.status(401).json({
         status: "failed",
@@ -94,7 +96,14 @@ exports.updateCartQuantity = async function (req, res) {
       });
     }
 
-    cartItem.quantity = quantity;
+    cartItem.quantity = Number(quantity);
+
+    // Prevent going below 1
+    if (cartItem.quantity < 1) {
+      cartItem.quantity = 1;
+    }
+
+    await cartItem.save();
     await cartItem.populate("productId");
 
     res.status(201).json({
