@@ -5,7 +5,7 @@ exports.getCartItems = async function (req, res) {
   try {
     const user = req.user;
     if (!user) {
-      res.status(400).json({
+      return res.status(400).json({
         status: "failed",
         message: "Please Login firstr ",
       });
@@ -30,14 +30,14 @@ exports.addToCart = async function (req, res) {
     if (!loggedInUser) {
       return res.status(400).json({
         status: "failed",
-        messaged: "Please Login first.",
+        message: "Please Login first.",
       });
     }
     const { quantity, productId } = req.body;
 
     //Checking if the product is already exisit in the cart
     const isAlreadyInCart = await Cart.findOne({
-      userId: loggedInUser._d,
+      userId: loggedInUser._id,
       productId: productId,
     });
     if (isAlreadyInCart) {
@@ -51,7 +51,9 @@ exports.addToCart = async function (req, res) {
       userId: loggedInUser._id,
       productId,
       quantity: quantity || 1,
-    }).populate("productId");
+    });
+
+    await newCartItem.populate("productId");
 
     res.status(201).json({
       status: "success",
