@@ -28,6 +28,7 @@ exports.getCartItems = async function (req, res) {
 exports.addToCart = async function (req, res) {
   try {
     const loggedInUser = req.user;
+    console.log("request   " + req);
     const { productId } = req.params;
 
     if (!loggedInUser) {
@@ -36,9 +37,8 @@ exports.addToCart = async function (req, res) {
         message: "Please Login first.",
       });
     }
-    const { quantity } = req.body;
 
-    //Checking if the product is already exisit in the cart
+    //Checking if the product is already exisit in the carttf
     const isAlreadyInCart = await Cart.findOne({
       userId: loggedInUser._id,
       productId: productId,
@@ -53,7 +53,7 @@ exports.addToCart = async function (req, res) {
     const newCartItem = await Cart.create({
       userId: loggedInUser._id,
       productId,
-      quantity: quantity || 1,
+      // quantity: quantity || 1,
     });
 
     await newCartItem.populate("productId");
@@ -110,6 +110,45 @@ exports.updateCartQuantity = async function (req, res) {
       status: "success",
       message: "Cart quantity upated succesfully",
       data: cartItem,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: err.message,
+    });
+  }
+};
+
+//Remove from cart
+exports.deleteFromCart = async function (req, res) {
+  try {
+    console.log(req + "request reciewv");
+    const loggedInUser = req.user;
+    const { productId } = req.params;
+
+    if (!loggedInUser) {
+      return res.status(401).json({
+        status: "failed",
+        message: "please login first",
+      });
+    }
+    const deletedDocument = await Cart.findOneAndDelete({
+      userId: loggedInUser._id,
+      productId,
+    });
+
+    if (!deletedDocument) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Cart item not found",
+      });
+    }
+
+    const data = await Cart.find({ userId: loggedInUser._id });
+
+    res.status(203).json({
+      status: "sucess",
+      data,
     });
   } catch (err) {
     res.status(400).json({

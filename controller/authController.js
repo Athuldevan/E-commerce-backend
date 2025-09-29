@@ -28,6 +28,7 @@ exports.signup = async function (req, res) {
 // LOGIN )
 exports.login = async function (req, res) {
   try {
+    console.log("requestttt" + req);
     const { email, password } = req.body;
     // 1) finding the user with email
     const user = await User.findOne({ email: email });
@@ -46,8 +47,8 @@ exports.login = async function (req, res) {
       res.cookie("token", TOKEN, {
         httpOnly: true,
         secure: false,
-        sameSite:"lax",
-         maxAge: 24 * 60 * 60 * 1000 // 1 dayy
+        sameSite: "lax",
+        maxAge: 24 * 60 * 60 * 1000, // 1 dayy
       });
 
       res.status(200).json({

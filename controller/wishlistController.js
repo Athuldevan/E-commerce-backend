@@ -11,7 +11,12 @@ exports.getAllWishlistitems = async function (req, res) {
       });
     }
 
-    const wishlistItems = await Wishlist.find({ userId: loggedInUser._id });
+    const wishlistItems = await Wishlist.find({
+      userId: loggedInUser._id,
+    }).populate("productId");
+
+    // await wishlistItem/s.populate("productId");
+
     res.status(200).json({
       status: "success",
       data: wishlistItems,
@@ -64,9 +69,42 @@ exports.addToWishlist = async function (req, res) {
 
     await newWishlist.populate("productId");
 
-    res.status(201).json({
+    res.status(204).json({
       status: "success",
       data: newWishlist,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: err.message,
+    });
+  }
+  n;
+};
+
+//Removce from  WISHLIST
+exports.removeFromWishlist = async function (req, res) {
+  try {
+    const loggedInUser = req.user;
+    const { productId } = req.params;
+    console.log(productId);
+
+    if (!loggedInUser) {
+      return res.status(401).json({
+        stat,
+      });
+    }
+
+    // -- Deleting the document
+    await Wishlist.findOneAndDelete({
+      userId: loggedInUser._id,
+      productId: productId,
+    });
+
+    const data = await Wishlist.find({ userId: loggedInUser._id });
+    res.status(20).json({
+      status: "Success",
+      data: data,
     });
   } catch (err) {
     res.status(400).json({

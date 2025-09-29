@@ -14,4 +14,7 @@ router
   .route("/update-cart-item/:productId")
   .put(authenticateUser, cartController.updateCartQuantity);
 
+router
+  .route("/delete-cart-item/:productId")
+  .delete(authenticateUser, cartController.deleteFromCart);
 module.exports = router;

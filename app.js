@@ -11,6 +11,12 @@ const wishlistRouter = require("./routes/wishlistRouter");
 const morgan = require("morgan");
 //
 
+app.use((req, res, next) => {
+  // console.log("Origin:", req.headers.origin);
+  console.log("URL : " + req.url);
+  next();
+});
+
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -19,6 +25,7 @@ app.use(
     credentials: true,
   })
 );
+
 app.use(morgan("dev"));
 
 app.use(express.json());
