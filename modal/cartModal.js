@@ -19,6 +19,19 @@ const cartSchema = mongoose.Schema(
   },
   { timestamp: true }
 );
+
+//Calculating total price
+cartSchema.statics.calculateTotalPrice = async function (userId) {
+  const cartItems = await this.find({ userId : userId}).populate("productId");
+
+  const totalPrice = cartItems.reduce((total, item) => {
+    const productPrice = item.productId.price;
+    return total + productPrice * item.quantity;
+  }, 0);
+
+  return totalPrice;
+};
+
 const Cart = mongoose.model("Cart", cartSchema);
 
 module.exports = Cart;

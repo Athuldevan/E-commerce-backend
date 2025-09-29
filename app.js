@@ -8,14 +8,15 @@ const userRouter = require("./routes/userRouter");
 const productRouter = require("./routes/productRouter");
 const cartRouter = require("./routes/cartRouter");
 const wishlistRouter = require("./routes/wishlistRouter");
+const orderRouter = require("./routes/orderRouter");
 const morgan = require("morgan");
 //
 
-app.use((req, res, next) => {
-  // console.log("Origin:", req.headers.origin);
-  console.log("URL : " + req.url);
-  next();
-});
+// app.use((req, res, next) => {
+//   // console.log("Origin:", req.headers.origin);
+//   console.log("URL : " + req.url);
+//   next();
+// });
 
 app.use(
   cors({
@@ -36,5 +37,6 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/carts", cartRouter);
 app.use("/api/v1/wishlist", wishlistRouter);
+app.use("/api/v1/orders", orderRouter);
 
 module.exports = app;
