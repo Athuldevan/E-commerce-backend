@@ -4,6 +4,7 @@ const Order = require("../modal/orderModal");
 exports.createOrder = async function (req, res) {
   try {
     const loggedInUser = req.user;
+
     if (!loggedInUser) {
       return res.status(401).json({
         status: "failed",
@@ -39,6 +40,7 @@ exports.createOrder = async function (req, res) {
       userId: loggedInUser?._id,
       products,
       totalPrice,
+      status: "pending",
     });
 
     //CLEARING THE CART AFTER CHECKOUTT
@@ -57,6 +59,7 @@ exports.createOrder = async function (req, res) {
   }
 };
 
+//GET ALL ORDERS
 exports.getAllOrders = async function (req, res) {
   try {
     const loggedInUser = req.user;
@@ -76,6 +79,51 @@ exports.getAllOrders = async function (req, res) {
     });
   } catch (err) {
     res.json({
+      status: "failed",
+      message: err.message,
+    });
+  }
+};
+
+/////////////////////////////////////////////////////////////
+
+//DELETE ORDER
+exports.deleteOrder = async function (req, res) {
+  try {
+    const loggedInUser = req.user;
+    if (!loggedInUser) {
+      return res.status(400).json({
+        status: "failed",
+        message: "please Login first",
+      });
+    }
+
+    const { orderId } = req.params;
+
+    if (!orderId) {
+      return res.status(400).json({
+        status: "success",
+        message: "Invalid order id or No such order exists with this order id ",
+      });
+    }
+
+    const isExist = await Order.findOne({ userId: loggedInUser, _id: orderId });
+
+    if (!isExist) {
+      return res.status(400).json({
+        status: "success",
+        message: "No such product found",
+      });
+    }
+
+    await Order.findOneAndDelete({ userId: loggedInUser._id, _id: orderId });
+
+    res.status(203).json({
+      status: "success",
+      data: null,
+    });
+  } catch (err) {
+    res.status(400).json({
       status: "failed",
       message: err.message,
     });

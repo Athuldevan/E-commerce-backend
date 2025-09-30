@@ -8,4 +8,8 @@ router.route("/").get(authenticateUser, orderController.getAllOrders);
 
 router.route("/create").post(authenticateUser, orderController.createOrder);
 
+router
+  .route(`/delete/:orderId`)
+  .delete(authenticateUser, orderController.deleteOrder);
+
 module.exports = router;

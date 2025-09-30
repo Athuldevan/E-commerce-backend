@@ -28,6 +28,7 @@ exports.getCheckoutSummary = async function (req, res) {
       price: item.productId.price,
       description: item.productId.description,
       quantity: item.quantity,
+      image: item.productId.image,
       subtotal: item.productId.price * item.quantity,
     }));
 
@@ -37,7 +38,6 @@ exports.getCheckoutSummary = async function (req, res) {
       0
     );
 
-  
     res.status(200).json({
       status: "success",
       products: summaryItems,
