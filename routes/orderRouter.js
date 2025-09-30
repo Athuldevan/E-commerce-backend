@@ -4,7 +4,8 @@ const orderController = require("../controller/orderController");
 
 const { authenticateUser } = require("../middlewares/auth.middleware");
 
+router.route("/").get(authenticateUser, orderController.getAllOrders);
 
-router.route("/checkout").post(authenticateUser, orderController.createOrder);
+router.route("/create").post(authenticateUser, orderController.createOrder);
 
 module.exports = router;

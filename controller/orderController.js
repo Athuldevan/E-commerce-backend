@@ -3,38 +3,53 @@ const Order = require("../modal/orderModal");
 
 exports.createOrder = async function (req, res) {
   try {
-    const loggedInUser = req?.user;
+    const loggedInUser = req.user;
     if (!loggedInUser) {
       return res.status(401).json({
-        status: "success",
+        status: "failed",
         message: "pleae login first",
       });
     }
-    const totalPrice = await Cart.calculateTotalPrice(loggedInUser._id);
+
+    //  Fetch all cart
     const cartItems = await Cart.find({ userId: loggedInUser._id }).populate(
       "productId"
     );
+
     if (cartItems.length === 0) {
       return res.status(400).json({
         status: "failed",
         message: "Cart is empty",
       });
     }
+
+    //MAPPING PRODCUCTSSSS INCLUDING QUANITITYY
+    const products = cartItems.map((item) => ({
+      productId: item.productId._id,
+      quantity: item.quantity,
+    }));
+
+    //TOTAL PRICE
+    const totalPrice = cartItems.reduce(
+      (sum, item) => sum + item.productId.price * item.quantity,
+      0
+    );
     // CREATING A NEW ORDER
     const newOrder = await Order.create({
       userId: loggedInUser?._id,
-      products: cartItems.map((item) => ({
-        productId: item.productId._id,
-        quantity: item.quantity,
-      })),
-      totalPrice: totalPrice,
+      products,
+      totalPrice,
     });
+
+    //CLEARING THE CART AFTER CHECKOUTT
+    await Cart.deleteMany({ userId: loggedInUser._id });
 
     return res.status(201).json({
       status: "success",
-      message: newOrder,
+      data: newOrder,
     });
   } catch (err) {
+    console.log(err);
     return res.status(400).json({
       status: "failed",
       message: err.message,
@@ -48,7 +63,7 @@ exports.getAllOrders = async function (req, res) {
 
     if (!loggedInUser) {
       return res.json({
-        status: "sucess",
+        status: "failed",
         message: "Please Login first",
       });
     }
@@ -61,7 +76,7 @@ exports.getAllOrders = async function (req, res) {
     });
   } catch (err) {
     res.json({
-      status: "success",
+      status: "failed",
       message: err.message,
     });
   }
