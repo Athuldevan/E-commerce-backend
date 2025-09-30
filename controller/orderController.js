@@ -43,21 +43,22 @@ exports.createOrder = async function (req, res) {
 };
 
 exports.getAllOrders = async function (req, res) {
-  const loggedInUser = req.user;
-
-  if (!loggedInUser) {
-    return res.json({
-      status: "sucess",
-      message: "Please Login first",
-    });
-  }
-  const allOrders = await Order.find({ userId: loggedInUser?._id });
-  res.status(200).json({
-    status: "success",
-    orders: allOrders,
-  });
-
   try {
+    const loggedInUser = req.user;
+
+    if (!loggedInUser) {
+      return res.json({
+        status: "sucess",
+        message: "Please Login first",
+      });
+    }
+    const allOrders = await Order.find({ userId: loggedInUser?._id }).populate(
+      "products.productId"
+    );
+    res.status(200).json({
+      status: "success",
+      orders: allOrders,
+    });
   } catch (err) {
     res.json({
       status: "success",

@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const morgan = require("morgan");
 
 const authRouter = require("./routes/authRouter");
 const userRouter = require("./routes/userRouter");
@@ -9,7 +10,8 @@ const productRouter = require("./routes/productRouter");
 const cartRouter = require("./routes/cartRouter");
 const wishlistRouter = require("./routes/wishlistRouter");
 const orderRouter = require("./routes/orderRouter");
-const morgan = require("morgan");
+const checkoutRouter = require("./routes/checkoutRouter");
+
 //
 
 // app.use((req, res, next) => {
@@ -28,7 +30,6 @@ app.use(
 );
 
 app.use(morgan("dev"));
-
 app.use(express.json());
 app.use(cookieParser());
 
@@ -38,5 +39,6 @@ app.use("/api/v1/products", productRouter);
 app.use("/api/v1/carts", cartRouter);
 app.use("/api/v1/wishlist", wishlistRouter);
 app.use("/api/v1/orders", orderRouter);
+app.use("/api/v1/checkout", checkoutRouter);
 
 module.exports = app;

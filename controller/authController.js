@@ -48,7 +48,7 @@ exports.login = async function (req, res) {
         httpOnly: true,
         secure: false,
         sameSite: "lax",
-        maxAge: 24 * 60 * 60 * 1000, // 1 dayy
+        maxAge: 24 * 60 * 60 * 1000, // 1 dayyyyy
       });
 
       res.status(200).json({
