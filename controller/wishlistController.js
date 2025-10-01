@@ -1,5 +1,6 @@
 const Wishlist = require("../modal/wishlistModal");
 
+// Get all wishlist items
 exports.getAllWishlistitems = async function (req, res) {
   try {
     const loggedInUser = req.user;
@@ -15,8 +16,6 @@ exports.getAllWishlistitems = async function (req, res) {
       userId: loggedInUser._id,
     }).populate("productId");
 
-    // await wishlistItem/s.populate("productId");
-
     res.status(200).json({
       status: "success",
       data: wishlistItems,
@@ -29,7 +28,7 @@ exports.getAllWishlistitems = async function (req, res) {
   }
 };
 
-//Add to wishlist
+// Add to wishlist
 exports.addToWishlist = async function (req, res) {
   try {
     const loggedInUser = req.user;
@@ -51,17 +50,16 @@ exports.addToWishlist = async function (req, res) {
 
     const isAlreadyInWishlist = await Wishlist.findOne({
       userId: loggedInUser._id,
-      productId: productId,
+      productId,
     });
 
     if (isAlreadyInWishlist) {
       return res.status(200).json({
-        status: "sucess",
+        status: "success",
         message: "This product is already in wishlist",
       });
     }
 
-    // 1) Add  the the wishlist of the logged in user schema or table
     const newWishlist = await Wishlist.create({
       userId: loggedInUser._id,
       productId,
@@ -69,7 +67,7 @@ exports.addToWishlist = async function (req, res) {
 
     await newWishlist.populate("productId");
 
-    res.status(204).json({
+    res.status(201).json({
       status: "success",
       data: newWishlist,
     });
@@ -79,32 +77,32 @@ exports.addToWishlist = async function (req, res) {
       message: err.message,
     });
   }
-  n;
 };
 
-//Removce from  WISHLIST
+// Remove from wishlist
 exports.removeFromWishlist = async function (req, res) {
   try {
     const loggedInUser = req.user;
     const { productId } = req.params;
-    console.log(productId);
 
     if (!loggedInUser) {
       return res.status(401).json({
-        stat,
+        status: "failed",
+        message: "Please login first",
       });
     }
 
-    // -- Deleting the document
     await Wishlist.findOneAndDelete({
       userId: loggedInUser._id,
-      productId: productId,
+      productId,
     });
 
-    const data = await Wishlist.find({ userId: loggedInUser._id });
-    res.status(20).json({
-      status: "Success",
-      data: data,
+    const data = await Wishlist.find({ userId: loggedInUser._id }).populate("productId");
+
+    res.status(200).json({
+      status: "success",
+      message: "Product removed from wishlist",
+      data,
     });
   } catch (err) {
     res.status(400).json({

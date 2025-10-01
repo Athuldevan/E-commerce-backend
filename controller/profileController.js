@@ -1,26 +1,5 @@
-const User = require("../modal/userModal");
 const Order = require("../modal/orderModal");
 
-//GET ALL USERS
-exports.getAllUsers = async function (req, res) {
-  try {
-    const allUsers = await User.find({});
-    res.status(200).json({
-      status: "success",
-      data: {
-        users: allUsers,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "messge",
-      message: err.message,
-    });
-  }
-};
-//////////////////////////////////////////////////////
-
-//View Profile
 exports.viewProfile = async function (req, res) {
   try {
     const loggedInUser = req.user;
@@ -32,6 +11,7 @@ exports.viewProfile = async function (req, res) {
     }
 
     const totalOrders = await Order.aggregate([
+      //first stage
       {
         $match: {
           userId: loggedInUser._id,
@@ -39,15 +19,25 @@ exports.viewProfile = async function (req, res) {
       },
 
       {
-        $unwind: "$products",
+        $unwind : '$products'
       },
-      {
-        $group: {
-          _id: null,
-          totalOrders: { $sum: 1 },
-        },
-      },
+     {
+      $group : {
+        _id : null,
+        totalOrders : {$sum : 1}
+       
+      }
+     }
+     
+
+      // {
+      //   $count : 'products.'
+      // }
     ]);
+    // const totalOrders = await Order.find({
+    //   userId: loggedInUser._id,
+    // }).populate("products.productId");
+    // console.log(totalOrders);
 
     res.status(200).json({
       status: "Success",

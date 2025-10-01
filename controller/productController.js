@@ -65,3 +65,4 @@ exports.createProduct = async function (req, res) {
     });
   }
 };
+
