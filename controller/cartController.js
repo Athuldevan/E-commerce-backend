@@ -28,7 +28,6 @@ exports.getCartItems = async function (req, res) {
 exports.addToCart = async function (req, res) {
   try {
     const loggedInUser = req.user;
-    console.log("request   " + req);
     const { productId } = req.params;
 
     if (!loggedInUser) {

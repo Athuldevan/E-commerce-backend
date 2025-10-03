@@ -3,7 +3,17 @@ const Product = require("../modal/productModal");
 // Get all products
 exports.getAllProducts = async function (req, res) {
   try {
-    const allProducts = await Product.find({});
+    const { category, page, limit } = req.query;
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+
+    const filter = category ? { category } : {};
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const allProducts = await Product.find(filter)
+      .skip(skip)
+      .limit(limitNumber);
+
     res.status(200).json({
       status: "success",
       products: allProducts,
@@ -20,7 +30,7 @@ exports.getAllProducts = async function (req, res) {
 exports.getProduct = async function (req, res) {
   try {
     const id = req.params?.id;
-    console.log(id);
+    z;
     const product = await Product.findById(id);
     console.log(product);
     res.status(200).json({
@@ -65,4 +75,3 @@ exports.createProduct = async function (req, res) {
     });
   }
 };
-
