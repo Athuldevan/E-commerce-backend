@@ -3,6 +3,7 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const morgan = require("morgan");
+const fs = require("node:fs");
 
 const authRouter = require("./routes/authRouter");
 const userRouter = require("./routes/userRouter");
@@ -40,5 +41,14 @@ app.use("/api/v1/carts", cartRouter);
 app.use("/api/v1/wishlist", wishlistRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/checkout", checkoutRouter);
+
+//404 error handling middleware
+app.use((err, req, res, next) => {
+  return res.status(404).json({
+    status: "Cant't find the url.",
+    message: err.message,
+  });
+});
+
 
 module.exports = app;

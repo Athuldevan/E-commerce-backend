@@ -30,7 +30,7 @@ exports.getAllProducts = async function (req, res) {
 exports.getProduct = async function (req, res) {
   try {
     const id = req.params?.id;
-    z;
+    
     const product = await Product.findById(id);
     console.log(product);
     res.status(200).json({

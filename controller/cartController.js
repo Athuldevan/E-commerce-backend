@@ -74,6 +74,7 @@ exports.updateCartQuantity = async function (req, res) {
   try {
     const loggedInUser = req.user;
     const { productId } = req.params;
+    
     const { quantity } = req.body;
 
     if (!loggedInUser) {
