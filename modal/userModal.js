@@ -28,6 +28,15 @@ const userSchema = mongoose.Schema(
       minLength: 6,
     },
 
+    role: {
+      type: String,
+      enum: {
+        values: ["user", "admin"],
+        message: "{VALUE} is not  a valid role",
+      },
+      default: "user",
+    },
+
     passwordResetToken: String,
     passwordResetExpires: Date,
 
@@ -60,7 +69,7 @@ userSchema.methods.createResetPasswordToken = function (next) {
     .update(resetToken)
     .digest("hex");
 
-  this.passwordResetExpires = Date.now() + 10 * 60 * 1000; //valid for 10min only
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
   console.log(resetToken, "resetToken");
   return resetToken;
 };

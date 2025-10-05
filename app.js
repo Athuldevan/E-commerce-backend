@@ -12,6 +12,7 @@ const cartRouter = require("./routes/cartRouter");
 const wishlistRouter = require("./routes/wishlistRouter");
 const orderRouter = require("./routes/orderRouter");
 const checkoutRouter = require("./routes/checkoutRouter");
+const adminRouter = require("./routes/adminRouter");
 
 //
 
@@ -36,6 +37,7 @@ app.use(cookieParser());
 
 app.use("/api/v1", authRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/carts", cartRouter);
 app.use("/api/v1/wishlist", wishlistRouter);
@@ -49,6 +51,5 @@ app.use((err, req, res, next) => {
     message: err.message,
   });
 });
-
 
 module.exports = app;

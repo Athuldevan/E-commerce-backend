@@ -47,7 +47,7 @@ exports.getProduct = async function (req, res) {
   }
 };
 
-//create a new product
+//create a new product // TODO : Restrict to admin only 
 exports.createProduct = async function (req, res) {
   try {
     const { name, description, price, image, category, brand, rating, count } =

@@ -6,13 +6,14 @@ const sendEmail = require("../utility/emial");
 // 1) SIGNIN
 exports.signup = async function (req, res) {
   try {
-    const { name, email, password, profileImage } = req.body;
+    const { name, email, password, profileImage, role } = req.body;
     const hashedPassword = await User.hashPassword(password);
     const newUser = await User.create({
       name,
       email,
       password: hashedPassword,
       profileImage,
+      role,
     });
     res.status(201).json({
       status: "sucees",
@@ -52,6 +53,13 @@ exports.login = async function (req, res) {
         sameSite: "lax",
         maxAge: 24 * 60 * 60 * 1000, // 1 dayyyyy
       });
+
+      if (user.role === "admin") {
+        return res.status(200).json({
+          status: "success",
+          message: "Successfully logged in as admin",
+        });
+      }
 
       res.status(200).json({
         status: "success",
