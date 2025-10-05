@@ -28,15 +28,4 @@ async function authenticateUser(req, res, next) {
   }
 }
 
-// TODO: complete the restrict to function
-async function restrictTo(req, res, next) {
-  try {
-  } catch (err) {
-    res.status(400).json({
-      status: "success",
-      message: err.message,
-    });
-  }
-}
-
-module.exports = { authenticateUser, restrictTo };
+module.exports = { authenticateUser };

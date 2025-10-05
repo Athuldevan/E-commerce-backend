@@ -29,3 +29,29 @@ exports.createProduct = async function (req, res) {
     });
   }
 };
+
+// Delete product
+exports.deleteProduct = async function (req, res) {
+  try {
+    const { productId } = req.params;
+    const deletedProduct = await Product.findByIdAndDelete(productId);
+    if (!deletedProduct) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No Such product exist!",
+      });
+    }
+    return res.status(203).json({
+      status: "success",
+      data: x,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: err.message,
+    });
+  }
+};
+
+
+// UPDATE product
