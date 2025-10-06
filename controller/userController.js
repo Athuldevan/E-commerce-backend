@@ -5,11 +5,17 @@ const Order = require("../modal/orderModal");
 exports.getAllUsers = async function (req, res) {
   try {
     const allUsers = await User.find({});
+
+    const totalUsers = await User.aggregate([
+      {
+        $count: "totalUsers",
+      },
+    ]);
+    const result = totalUsers?.[0].totalUsers;
     res.status(200).json({
       status: "success",
-      data: {
-        users: allUsers,
-      },
+      result,
+      users: allUsers,
     });
   } catch (err) {
     res.status(404).json({
@@ -18,6 +24,7 @@ exports.getAllUsers = async function (req, res) {
     });
   }
 };
+
 ///////////////////////////////////////////////////////////////////
 
 //View Profile

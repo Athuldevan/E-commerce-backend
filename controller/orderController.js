@@ -1,6 +1,7 @@
 const Cart = require("../modal/cartModal");
 const Order = require("../modal/orderModal");
 
+// Order creation
 exports.createOrder = async function (req, res) {
   try {
     const loggedInUser = req.user;
@@ -58,8 +59,8 @@ exports.createOrder = async function (req, res) {
     });
   }
 };
-
-//GET ALL ORDERS
+// ******************************************************************//
+//GET ALL ORDERS of the logged user
 exports.getAllOrders = async function (req, res) {
   try {
     const loggedInUser = req.user;
@@ -73,6 +74,7 @@ exports.getAllOrders = async function (req, res) {
     const allOrders = await Order.find({ userId: loggedInUser?._id }).populate(
       "products.productId"
     );
+
     res.status(200).json({
       status: "success",
       orders: allOrders,
@@ -85,7 +87,7 @@ exports.getAllOrders = async function (req, res) {
   }
 };
 
-/////////////////////////////////////////////////////////////
+// ******************************************************************//
 
 //DELETE ORDER
 exports.deleteOrder = async function (req, res) {
@@ -129,3 +131,6 @@ exports.deleteOrder = async function (req, res) {
     });
   }
 };
+//******************************************************************/
+
+// GET ALL ORDERS

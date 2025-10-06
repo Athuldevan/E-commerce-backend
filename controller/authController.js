@@ -57,7 +57,7 @@ exports.login = async function (req, res) {
       if (user.role === "admin") {
         return res.status(200).json({
           status: "success",
-          message: "Successfully logged in as admin",
+          data: user,
         });
       }
 

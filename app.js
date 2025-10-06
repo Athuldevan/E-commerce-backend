@@ -43,6 +43,7 @@ app.use("/api/v1/carts", cartRouter);
 app.use("/api/v1/wishlist", wishlistRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/checkout", checkoutRouter);
+app.use('/api/v1/admin',adminRouter)
 
 //404 error handling middleware
 app.use((err, req, res, next) => {

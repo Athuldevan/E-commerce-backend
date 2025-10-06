@@ -7,7 +7,6 @@ dotenv.config({
 });
 
 const PORT = 3000;
-const HOST = "127.0.0.1";
 
 // app.listen(HOST, PORT, () => {
 //   console.log("app is runnin on 3000 port ");
@@ -28,3 +27,4 @@ mongoose
 app.listen(PORT,"localhost", () => {
   console.log("Server is runnibg on   PORT  3000⌛⌛⌛ ");
 });
+
