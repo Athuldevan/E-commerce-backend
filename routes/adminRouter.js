@@ -5,7 +5,7 @@ const { authenticateUser } = require("../middlewares/auth.middleware");
 
 const adminController = require("../controller/adminController");
 
-router.get('/orders', adminController.getAllOrders)
+router.get("/orders", adminController.getAllOrders);
 
 router
   .route("/createProduct")
@@ -18,5 +18,7 @@ router
 router
   .route("/updateProduct/:productId")
   .patch(authenticateUser, restrictTo("admin"), adminController.updateProduct);
+
+router.route("/viewOrder/:orderId").get(adminController.viewOrder);
 
 module.exports = router;

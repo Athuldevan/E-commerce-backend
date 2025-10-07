@@ -45,7 +45,7 @@ exports.deleteProduct = async function (req, res) {
     }
     return res.status(203).json({
       status: "success",
-      data: x,
+      data: null
     });
   } catch (err) {
     res.status(400).json({
@@ -92,7 +92,7 @@ exports.updateProduct = async function (req, res) {
   }
 };
 // ******************************************************************//
-
+//-------------ORDER SECTION
 // Fetch all orders of the
 exports.getAllOrders = async function (req, res) {
   try {
@@ -119,6 +119,28 @@ exports.getAllOrders = async function (req, res) {
       status: "success",
       message: err.message,
       stack: err.stack,
+    });
+  }
+};
+
+// ******************************************************************//
+
+//View the Order
+exports.viewOrder = async function (req, res) {
+  try {
+    const {orderId} = req.params;
+ 
+    if (!orderId) throw new Error(`No order id `);
+    const order = await Order.findById(orderId).populate('products.productId')
+    res.status(200).json({
+      status : 'sucess',
+      data : order
+    })
+  } catch (err) {
+    console.log(err.stack)
+    res.status(400).json({
+      status: "success",
+      message: err.message,
     });
   }
 };
