@@ -19,6 +19,16 @@ router
   .route("/updateProduct/:productId")
   .patch(authenticateUser, restrictTo("admin"), adminController.updateProduct);
 
-router.route("/viewOrder/:orderId").get(adminController.viewOrder);
+router
+  .route("/viewOrder/:orderId")
+  .get(authenticateUser, restrictTo("admin"), adminController.viewOrder);
+
+router
+  .route("/changeOrderStatus/:orderId")
+  .put(
+    authenticateUser,
+    restrictTo("admin"),
+    adminController.changeOrderStatus
+  );
 
 module.exports = router;

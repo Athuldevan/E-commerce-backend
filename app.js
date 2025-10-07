@@ -25,7 +25,7 @@ const adminRouter = require("./routes/adminRouter");
 app.use(
   cors({
     origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
@@ -43,7 +43,7 @@ app.use("/api/v1/carts", cartRouter);
 app.use("/api/v1/wishlist", wishlistRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/checkout", checkoutRouter);
-app.use('/api/v1/admin',adminRouter)
+app.use("/api/v1/admin", adminRouter);
 
 //404 error handling middleware
 app.use((err, req, res, next) => {
