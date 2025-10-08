@@ -1,7 +1,10 @@
 const Order = require("../modal/orderModal");
 const Product = require("../modal/productModal");
+const User = require("../modal/userModal");
 
-// Creaate a Product
+// ******************************************************************//
+// -----------------------PRODUCT SECTION-----------------------//
+// ******************************************************************//
 exports.createProduct = async function (req, res) {
   try {
     const { name, description, price, image, category, brand, rating, count } =
@@ -91,8 +94,11 @@ exports.updateProduct = async function (req, res) {
     });
   }
 };
+
 // ******************************************************************//
-//-------------ORDER SECTION
+// -----------------------ORDER SECTION-----------------------//
+// ******************************************************************//
+
 // Fetch all orders of the
 exports.getAllOrders = async function (req, res) {
   try {
@@ -122,7 +128,6 @@ exports.getAllOrders = async function (req, res) {
     });
   }
 };
-
 // ******************************************************************//
 
 //View the Order
@@ -179,12 +184,10 @@ exports.changeOrderStatus = async function (req, res) {
     );
 
     if (!order)
-      return res
-        .status(404)
-        .json({
-          status: "success",
-          message: "There is no such product exists",
-        });
+      return res.status(404).json({
+        status: "success",
+        message: "There is no such product exists",
+      });
 
     res.status(200).json({
       status: "success",
@@ -197,3 +200,67 @@ exports.changeOrderStatus = async function (req, res) {
     });
   }
 };
+// ******************************************************************//
+// -----------------------USERS SECTION-----------------------//
+// ******************************************************************//
+
+// Fetch all users
+exports.getAllUsers = async function (req, res) {
+  try {
+    const { isBlocked } = req.query;
+    const filter = isBlocked ? { isBlocked, role: "user" } : { role: "user" };
+    if (!req.user) {
+      return res.status(401).json({
+        status: "failed",
+        message: `Please login `,
+      });
+    }
+    const allUsers = await User.find(filter);
+    res.status(200).json({
+      status: "success",
+      data: allUsers,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "success",
+      message: err.message,
+    });
+  }
+};
+
+// Block user
+exports.blockUser = async function (req, res) {
+  try {
+    const loggedInUser = req.user;
+    if (!loggedInUser) {
+      return res.status(404).json({
+        status: "failed",
+        message: "You are not logged in please login",
+      });
+    }
+    const { id } = req.params;
+    console.log(id);
+
+    if (!id) throw new Error(`No user id, Redirecting to login page  `);
+
+    const user = await User.findById({ _id: id });
+
+    if (!user)
+      throw new Error(
+        `No user found with that id, Please create your account an login..Happy shopping`
+      );
+    user.isBlocked = !user.isBlocked;
+    await user.save();
+
+    res.status(200).json({
+      status: "success",
+      data: user,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: err.message,
+    });
+  }
+};
+///////////////////

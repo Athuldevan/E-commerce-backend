@@ -17,9 +17,6 @@ async function authenticateUser(req, res, next) {
 
     req.user = user;
     next();
-    // if (token) {
-    //   next();
-    // } else throw new Error("Login required.Please Login");
   } catch (err) {
     res.status(401).json({
       status: "failed",

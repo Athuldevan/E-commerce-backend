@@ -46,6 +46,11 @@ const userSchema = mongoose.Schema(
       type: String,
       default: "https://avatar.iran.liara.run/public/5",
     },
+
+    isBlocked: {
+      type: Boolean,
+      default : false,
+    },
   },
   { timestamps: true }
 );
@@ -80,9 +85,6 @@ userSchema.pre("save", function (next) {
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
-
-
-
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;

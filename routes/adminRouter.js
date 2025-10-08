@@ -2,10 +2,23 @@ const express = require("express");
 const router = express.Router();
 const { restrictTo } = require("../middlewares/role.middleware");
 const { authenticateUser } = require("../middlewares/auth.middleware");
-
 const adminController = require("../controller/adminController");
 
-router.get("/orders", adminController.getAllOrders);
+router.get(
+  "/orders",
+  authenticateUser,
+  restrictTo("admin"),
+  adminController.getAllOrders
+);
+
+router
+  .route("/users")
+  .get(authenticateUser, restrictTo("admin"), adminController.getAllUsers);
+
+
+router
+  .route("/users/:id")
+  .put(authenticateUser, restrictTo("admin"), adminController.blockUser);
 
 router
   .route("/createProduct")
