@@ -208,13 +208,14 @@ exports.changeOrderStatus = async function (req, res) {
 exports.getAllUsers = async function (req, res) {
   try {
     const { isBlocked } = req.query;
-    const filter = isBlocked ? { isBlocked, role: "user" } : { role: "user" };
-    if (!req.user) {
-      return res.status(401).json({
-        status: "failed",
-        message: `Please login `,
-      });
+    console.log(req.query);
+    console.log(isBlocked, typeof isBlocked);
+    let filter = { role: "user" };
+
+    if (isBlocked) {
+      filter.isBlocked = isBlocked === "true"; // converting to string to boolean
     }
+
     const allUsers = await User.find(filter);
     res.status(200).json({
       status: "success",
@@ -263,4 +264,31 @@ exports.blockUser = async function (req, res) {
     });
   }
 };
-///////////////////
+//////////////////////
+
+// ******************************************************************//
+// -----------------------PRODUCTS SECTION-----------------------//
+// ******************************************************************//
+
+exports.getAllProducts = async function (req, res) {
+  try {
+    const { category, page, limit } = req.query;
+    const filter = category ? { category } : {};
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const allProducts = await Product.find(filter)
+      .skip(skip)
+      .limit(limitNumber);
+    return res.status(200).json({
+      status: "success",
+      data: allProducts,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: err.message,
+    });
+  }
+};

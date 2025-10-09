@@ -4,6 +4,12 @@ const { restrictTo } = require("../middlewares/role.middleware");
 const { authenticateUser } = require("../middlewares/auth.middleware");
 const adminController = require("../controller/adminController");
 
+
+router
+  .route("/users")
+  .get(authenticateUser, restrictTo("admin"), adminController.getAllUsers);
+
+
 router.get(
   "/orders",
   authenticateUser,
@@ -11,10 +17,11 @@ router.get(
   adminController.getAllOrders
 );
 
-router
-  .route("/users")
-  .get(authenticateUser, restrictTo("admin"), adminController.getAllUsers);
 
+
+router
+  .route("/products")
+  .get(authenticateUser, restrictTo("admin"), adminController.getAllProducts);
 
 router
   .route("/users/:id")
