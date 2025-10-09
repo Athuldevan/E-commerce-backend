@@ -322,3 +322,22 @@ exports.addProduct = async function (req, res) {
     });
   }
 };
+
+//Delete products
+exports.deleteProduct = async function (req, res) {
+  try {
+    const { productId } = req.params;
+    if (!productId)
+      throw new Error("No product Id please provide a product id ");
+    await Product.findByIdAndDelete(productId);
+    res.status(200).json({
+      status: "success",
+      data: "deleted succesfully",
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: err.message,
+    });
+  }
+};
