@@ -28,8 +28,8 @@ router
   .put(authenticateUser, restrictTo("admin"), adminController.blockUser);
 
 router
-  .route("/createProduct")
-  .post(authenticateUser, restrictTo("admin"), adminController.createProduct);
+  .route("/addProduct")
+  .post(authenticateUser, restrictTo("admin"), adminController.addProduct);
 
 router
   .route("/deleteProduct/:productId")

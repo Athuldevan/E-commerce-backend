@@ -46,32 +46,3 @@ exports.getProduct = async function (req, res) {
     });
   }
 };
-
-//create a new product // TODO : Restrict to admin only 
-exports.createProduct = async function (req, res) {
-  try {
-    const { name, description, price, image, category, brand, rating, count } =
-      req.body;
-
-    const newProduct = await Product.create({
-      name,
-      description,
-      price,
-      image,
-      category,
-      brand,
-      rating,
-      count,
-    });
-
-    res.status(201).json({
-      status: "message",
-      data: newProduct,
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "failed",
-      message: err.message,
-    });
-  }
-};

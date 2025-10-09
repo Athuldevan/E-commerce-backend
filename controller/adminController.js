@@ -211,7 +211,6 @@ exports.getAllUsers = async function (req, res) {
     console.log(req.query);
     console.log(isBlocked, typeof isBlocked);
     let filter = { role: "user" };
-
     if (isBlocked) {
       filter.isBlocked = isBlocked === "true"; // converting to string to boolean
     }
@@ -278,12 +277,43 @@ exports.getAllProducts = async function (req, res) {
     const limitNumber = parseInt(limit);
     const skip = (pageNumber - 1) * limitNumber;
 
+    const totalProducts = await Product.countDocuments(filter);
+
     const allProducts = await Product.find(filter)
       .skip(skip)
       .limit(limitNumber);
     return res.status(200).json({
       status: "success",
       data: allProducts,
+      totalProducts,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: err.message,
+    });
+  }
+};
+
+//Add product
+exports.addProduct = async function (req, res) {
+  try {
+    const { name, description, price, image, category, brand, rating, count } =
+      req.body;
+
+    const newProduct = await Product.create({
+      name,
+      description,
+      price,
+      image,
+      category,
+      brand,
+      rating,
+      count,
+    });
+    res.status(201).json({
+      status: "success",
+      data: newProduct,
     });
   } catch (err) {
     res.status(400).json({

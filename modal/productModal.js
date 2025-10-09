@@ -24,8 +24,6 @@ const productSchema = mongoose.Schema({
       "https://images.unsplash.com/photo-1671119720870-df45dcaf81c1?q=80&w=1955&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
 
-
-
   rating: {
     type: Number,
     default: 4.5,
@@ -40,6 +38,10 @@ const productSchema = mongoose.Schema({
   count: {
     type: Number,
     default: 10,
+  },
+
+  isActive: {
+    type: Boolean,
   },
 });
 
