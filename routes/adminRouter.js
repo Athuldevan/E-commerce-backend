@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const authController = require('../controller/authController')
 const { restrictTo } = require("../middlewares/role.middleware");
 const productController = require("../controller/productController");
 const { authenticateUser } = require("../middlewares/auth.middleware");
@@ -19,6 +20,11 @@ router.get(
 router
   .route("/products")
   .get(authenticateUser, restrictTo("admin"), adminController.getAllProducts);
+
+
+  router.route('/forgotPassword').post(authController.forgotPassword)
+
+  router.route('/resetPassword/:token').patch(authController.resetPassword)
 
 router
   .route("/users/:id")

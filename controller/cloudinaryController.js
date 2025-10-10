@@ -1,0 +1,1 @@
+exports.upload = async func

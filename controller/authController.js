@@ -31,7 +31,6 @@ exports.signup = async function (req, res) {
 // LOGIN )
 exports.login = async function (req, res) {
   try {
-    console.log("requestttt" + req);
     const { email, password } = req.body;
     // 1) finding the user with email
     const user = await User.findOne({ email: email });
@@ -83,6 +82,7 @@ exports.login = async function (req, res) {
 exports.forgotPassword = async function (req, res) {
   try {
     const { email } = req.body;
+    if (!email) throw new Error(`Please provide a email`);
     const user = await User.findOne({ email });
 
     if (!user) {

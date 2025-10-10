@@ -1,10 +1,13 @@
 const Order = require("../modal/orderModal");
 const Product = require("../modal/productModal");
 const User = require("../modal/userModal");
+const multer = require("multer")
+const fs = require("fs")
 
 // ******************************************************************//
 // -----------------------PRODUCT SECTION-----------------------//
-// ******************************************************************//
+// ******************************************************************//\
+const upload = multer({ dest: "uploads/" });
 exports.createProduct = async function (req, res) {
   try {
     const { name, description, price, image, category, brand, rating, count } =
