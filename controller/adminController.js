@@ -102,7 +102,14 @@ exports.updateProduct = async function (req, res) {
 // Fetch all orders of the
 exports.getAllOrders = async function (req, res) {
   try {
+    const { page, limit } = req.query;
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limit;
+
     const allOrders = await Order.find({})
+      .skip(skip)
+      .limit(limitNumber)
       .populate("products.productId")
       .populate({ path: "userId", select: "name" });
     const revenue = await Order.aggregate([
@@ -185,7 +192,7 @@ exports.changeOrderStatus = async function (req, res) {
 
     if (!order)
       return res.status(404).json({
-        status: "success",
+        status: "fail",
         message: "There is no such product exists",
       });
 
@@ -207,15 +214,16 @@ exports.changeOrderStatus = async function (req, res) {
 // Fetch all users
 exports.getAllUsers = async function (req, res) {
   try {
-    const { isBlocked } = req.query;
-    console.log(req.query);
-    console.log(isBlocked, typeof isBlocked);
+    const { isBlocked, page, limit } = req.query;
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
     let filter = { role: "user" };
     if (isBlocked) {
       filter.isBlocked = isBlocked === "true"; // converting to string to boolean
     }
 
-    const allUsers = await User.find(filter);
+    const allUsers = await User.find(filter).skip(skip).limit(limitNumber);
     res.status(200).json({
       status: "success",
       data: allUsers,
@@ -344,7 +352,7 @@ exports.deleteProduct = async function (req, res) {
 exports.editProduct = async function (req, res) {
   try {
     const { productId } = req.params;
-    const { description, price, stock,name,image,category } = req.body;
+    const { description, price, stock, name, image, category } = req.body;
 
     console.log("Prodsuct ID:", productId);
     console.log("Requestr body:", req.body);
@@ -356,15 +364,14 @@ exports.editProduct = async function (req, res) {
     if (description !== undefined) updateData.description = description;
     if (price !== undefined) updateData.price = price;
     if (stock !== undefined) updateData.stock = stock;
-    if(name !== undefined) updateData.name = name;
-    if(image !== undefined) updateData.image =image
-    if(category !== undefined) updateData.category = category
+    if (name !== undefined) updateData.name = name;
+    if (image !== undefined) updateData.image = image;
+    if (category !== undefined) updateData.category = category;
 
-    const product = await Product.findByIdAndUpdate(
-      productId,
-      updateData,
-      { new: true, runValidators: true }
-    );
+    const product = await Product.findByIdAndUpdate(productId, updateData, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!product) {
       return res.status(404).json({
@@ -386,4 +393,3 @@ exports.editProduct = async function (req, res) {
     });
   }
 };
-
