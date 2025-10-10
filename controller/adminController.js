@@ -341,3 +341,49 @@ exports.deleteProduct = async function (req, res) {
     });
   }
 };
+exports.editProduct = async function (req, res) {
+  try {
+    const { productId } = req.params;
+    const { description, price, stock,name,image,category } = req.body;
+
+    console.log("Prodsuct ID:", productId);
+    console.log("Requestr body:", req.body);
+
+    if (!productId)
+      throw new Error("No product id. Please provide a product id");
+
+    const updateData = {};
+    if (description !== undefined) updateData.description = description;
+    if (price !== undefined) updateData.price = price;
+    if (stock !== undefined) updateData.stock = stock;
+    if(name !== undefined) updateData.name = name;
+    if(image !== undefined) updateData.image =image
+    if(category !== undefined) updateData.category = category
+
+    const product = await Product.findByIdAndUpdate(
+      productId,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!product) {
+      return res.status(404).json({
+        status: "failed",
+        message: "No such product exists",
+      });
+    }
+
+    console.log("Updated product:", product);
+
+    res.status(200).json({
+      status: "success",
+      data: product,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      status: "failed",
+      message: err.message,
+    });
+  }
+};
+
