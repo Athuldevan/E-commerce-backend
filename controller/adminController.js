@@ -10,25 +10,14 @@ const fs = require("fs");
 exports.createProduct = async function (req, res) {
   try {
     console.log(`Admin add to prodcut is reached `);
-    const { name, description, price, category, brand, rating, count } =
+    const { image, name, description, price, category, brand, rating, count } =
       req.body;
-
-    if (!req.file) {
-      return res.status(400).json({
-        status: "failed",
-        message: "No image file uploaded",
-      });
-    }
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: "ecommerce/products",
-      resource_type: "image",
-    });
 
     const newProduct = await Product.create({
       name,
       description,
       price,
-      image: result.secure_url, // Cloudinary image link
+      image,
       category,
       brand,
       rating,
@@ -293,17 +282,27 @@ exports.blockUser = async function (req, res) {
 
 exports.getAllProducts = async function (req, res) {
   try {
-    const { category, page, limit } = req.query;
+    const { category, page, limit, sort } = req.query;
     const filter = category ? { category } : {};
     const pageNumber = parseInt(page);
     const limitNumber = parseInt(limit);
     const skip = (pageNumber - 1) * limitNumber;
 
+    const sortFilter = {};
+    if (sort === "higher") {
+      sortFilter.price = 1;
+    }
+    if (sort === "lower") {
+      sortFilter.price = -1;
+    }
     const totalProducts = await Product.countDocuments(filter);
 
     const allProducts = await Product.find(filter)
+      .sort(sortFilter)
       .skip(skip)
       .limit(limitNumber);
+
+    console.log(sortFilter,sort);
     return res.status(200).json({
       status: "success",
       data: allProducts,
@@ -322,16 +321,6 @@ exports.addProduct = async function (req, res) {
   try {
     const { name, description, price, category, brand, rating, count, image } =
       req.body;
-
-    // console.log("requested file" + req.file);
-    // if (!req.file) {
-    //   return res.status(400).json({
-    //     status: "failed",
-    //     message: "Please upload an image ",
-    //   });
-    // }
-    // const imageUrl = req.file.path;
-
     const newProduct = await Product.create({
       name,
       description,
