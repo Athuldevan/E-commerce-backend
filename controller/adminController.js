@@ -1,23 +1,34 @@
 const Order = require("../modal/orderModal");
 const Product = require("../modal/productModal");
 const User = require("../modal/userModal");
-const multer = require("multer")
-const fs = require("fs")
+const multer = require("multer");
+const fs = require("fs");
 
 // ******************************************************************//
 // -----------------------PRODUCT SECTION-----------------------//
 // ******************************************************************//\
-const upload = multer({ dest: "uploads/" });
 exports.createProduct = async function (req, res) {
   try {
-    const { name, description, price, image, category, brand, rating, count } =
+    console.log(`Admin add to prodcut is reached `);
+    const { name, description, price, category, brand, rating, count } =
       req.body;
+
+    if (!req.file) {
+      return res.status(400).json({
+        status: "failed",
+        message: "No image file uploaded",
+      });
+    }
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "ecommerce/products",
+      resource_type: "image",
+    });
 
     const newProduct = await Product.create({
       name,
       description,
       price,
-      image,
+      image: result.secure_url, // Cloudinary image link
       category,
       brand,
       rating,
@@ -309,8 +320,17 @@ exports.getAllProducts = async function (req, res) {
 //Add product
 exports.addProduct = async function (req, res) {
   try {
-    const { name, description, price, image, category, brand, rating, count } =
+    const { name, description, price, category, brand, rating, count, image } =
       req.body;
+
+    // console.log("requested file" + req.file);
+    // if (!req.file) {
+    //   return res.status(400).json({
+    //     status: "failed",
+    //     message: "Please upload an image ",
+    //   });
+    // }
+    // const imageUrl = req.file.path;
 
     const newProduct = await Product.create({
       name,
@@ -352,6 +372,7 @@ exports.deleteProduct = async function (req, res) {
     });
   }
 };
+//edit prodcut
 exports.editProduct = async function (req, res) {
   try {
     const { productId } = req.params;
@@ -382,8 +403,6 @@ exports.editProduct = async function (req, res) {
         message: "No such product exists",
       });
     }
-
-    console.log("Updated product:", product);
 
     res.status(200).json({
       status: "success",

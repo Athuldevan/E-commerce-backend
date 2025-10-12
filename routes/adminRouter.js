@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const authController = require('../controller/authController')
+const authController = require("../controller/authController");
 const { restrictTo } = require("../middlewares/role.middleware");
 const productController = require("../controller/productController");
 const { authenticateUser } = require("../middlewares/auth.middleware");
 const adminController = require("../controller/adminController");
+const {upload} = require("../middlewares/cloudinart.middleware")
 
 router
   .route("/users")
@@ -21,18 +22,24 @@ router
   .route("/products")
   .get(authenticateUser, restrictTo("admin"), adminController.getAllProducts);
 
+router.route("/forgotPassword").post(authController.forgotPassword);
 
-  router.route('/forgotPassword').post(authController.forgotPassword)
-
-  router.route('/resetPassword/:token').patch(authController.resetPassword)
+router.route("/resetPassword/:token").patch(authController.resetPassword);
 
 router
   .route("/users/:id")
   .put(authenticateUser, restrictTo("admin"), adminController.blockUser);
 
+//add prodcut
+console.log('add prodcut route reached ');
 router
   .route("/addProduct")
-  .post(authenticateUser, restrictTo("admin"), adminController.addProduct);
+  .post(
+    authenticateUser,
+    restrictTo("admin"),
+    upload.single("image"),
+    adminController.addProduct
+  );
 
 router
   .route("/viewProduct/:id")

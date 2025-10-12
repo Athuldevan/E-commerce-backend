@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema(
     name: {
       type: String,
       required: [true, "A user must have a name"],
-      maxLength: 12,
+      maxLength: 12, 
       trim: true,
     },
 

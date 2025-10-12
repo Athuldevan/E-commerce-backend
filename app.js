@@ -3,7 +3,8 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const morgan = require("morgan");
-const fs = require("node:fs");
+const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
 
 const authRouter = require("./routes/authRouter");
 const userRouter = require("./routes/userRouter");
@@ -15,13 +16,17 @@ const checkoutRouter = require("./routes/checkoutRouter");
 const adminRouter = require("./routes/adminRouter");
 
 //
-
-// app.use((req, res, next) => {
-//   // console.log("Origin:", req.headers.origin);
-//   console.log("URL : " + req.url);
-//   next();
-// });
-
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: {
+    status: 429,
+    message: "Too many request.Please try again in an hour",
+  },
+  standardHeaders: true,
+  legacyHeaders: true,
+});
+app.use(helmet());
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -35,6 +40,10 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
 
+app.use((err, req, res, next) => {
+  console.log(`REQUEST + `, req);
+});
+app.use("/api", limiter);
 app.use("/api/v1", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/admin", adminRouter);
